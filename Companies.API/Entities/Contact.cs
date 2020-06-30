@@ -27,6 +27,6 @@ namespace Companies.API.Entities
         // FOREING KEYS IDs - NAVIGATION PROPERTIES
 
         [ForeignKey("CompanyId")]
-        public virtual Company Companies { get; set; }
+        public virtual Company Company { get; set; }
     }
 }

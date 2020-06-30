@@ -53,10 +53,13 @@ namespace Companies.API.Controllers
                 Description = department.Description
                 //UserId = user.Id,
             };
+
+
+
             _db.Departments.Add(departmentObj);
             _db.SaveChanges();
 
-            return Ok(new { vehicleId = departmentObj.Id, message = "Department Added Successfully" });
+            return Ok(new { Id = departmentObj.Id, message = "Department Added Successfully" });
         }
 
 
@@ -105,12 +108,13 @@ namespace Companies.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(DepartmentDTO))]
+        [ProducesResponseType(404)]
         public IActionResult Details(int id)
         {
             var foundDepartments = _db.RelationshipTypes.Find(id);
             if (foundDepartments == null)
             {
-                return NoContent();
+                return NotFound();
             }
 
             //map and return DTO
@@ -120,6 +124,25 @@ namespace Companies.API.Controllers
             return Ok(departmentDTO);
         }
 
+
+        // I added this action for testing purpouses
+        [HttpPost("[action]")]
+        public IActionResult Redirection(int id)
+        {
+            if (id == 0)
+            {
+                return RedirectToAction("List", "Department");
+            }
+
+            else
+            {
+                return null;
+            }
+
+
+            //return Response.Redirect("List");
+            //return RedirectToAction("List");
+        }
 
 
     }
