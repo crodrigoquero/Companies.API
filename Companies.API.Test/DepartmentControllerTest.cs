@@ -87,7 +87,7 @@ namespace Companies.API.Test
                 new Claim(ClaimTypes.Name, "username"),
                 new Claim(ClaimTypes.NameIdentifier, "userId"),
                 new Claim(ClaimTypes.Email, "userId@cojones.com"),
-                new Claim("name", "John Doe"),
+                //new Claim("name", "Carlos Rodrigo"),
             };
             var identity = new ClaimsIdentity(claims, "TestAuthType");
             var claimsPrincipal = new ClaimsPrincipal(identity);
