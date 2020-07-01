@@ -23,7 +23,7 @@ namespace Companies.API.Test
 
         private ApplicationDbContext context;
         public static DbContextOptions<ApplicationDbContext> dbContextOptions { get; }
-        public static string connectionString = "server=localhost;userid=root;pwd=noolvidar+1;port=3306;database=companies;allowPublicKeyRetrieval=true;sslmode=none;";
+        public static string connectionString = "server=localhost;userid=root;pwd=noolvidar+1;port=3306;database=companiesTest;allowPublicKeyRetrieval=true;sslmode=none;";
 
         static CompanyControllerTest()
         {
@@ -35,8 +35,8 @@ namespace Companies.API.Test
         public CompanyControllerTest()
         {
             context = new ApplicationDbContext(dbContextOptions);
-            //DummyDataDBInitializer db = new DummyDataDBInitializer();
-            //db.Seed(context);
+            DummyDataDBInitializer _db = new DummyDataDBInitializer();
+            _db.Seed(context);
 
             //repository = new PostRepository(context);
 
@@ -107,7 +107,7 @@ namespace Companies.API.Test
                 LinkedIn = "linked in",
                 Twitter = "twitter",
                 Facebook = "facebook",
-                CompanyRelationshipTypeId = 1, // foreing key
+                CompanyRelationshipTypeId = 100, // foreing key
                 BusinessTypeId = 1 // foreing key
 
             };
