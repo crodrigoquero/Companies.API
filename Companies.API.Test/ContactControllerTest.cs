@@ -76,14 +76,30 @@ namespace Companies.API.Test
             OkObjectResult okObjectResult = actionResult as OkObjectResult;
             IEnumerable<ContactDTO> contacts = okObjectResult.Value as IEnumerable<ContactDTO>;
 
-            Assert.AreEqual(contacts.Count(), 1);
-
-
             //ASSERT
-            Assert.AreEqual(contacts.Count(), 1);
+            Assert.AreEqual(contacts.Count(), 2);
             Assert.IsInstanceOfType(actionResult, typeof(OkObjectResult));
         }
 
+        [TestMethod]
+        public void Search_Works()
+        {
+            //Arrange  
+            ContactController contactController = new ContactController(context);
+
+            var contactLastName = "Gotera"; // there are two "Gotera" guys in the db
+
+            // invoke the get action of the controller
+            IActionResult actionResult = contactController.Search(contactLastName); // IActionResult is the base for all other returning types, like "OkObjectResult"
+
+            //some cast to be able to read the returned value
+            OkObjectResult okObjectResult = actionResult as OkObjectResult;
+            IEnumerable<ContactDTO> contacts = okObjectResult.Value as IEnumerable<ContactDTO>;
+
+            //ASSERT
+            Assert.AreEqual(contacts.Count(), 2);
+            Assert.IsInstanceOfType(actionResult, typeof(OkObjectResult));
+        }
 
         [TestMethod]
         public void Post_Works()
@@ -133,6 +149,6 @@ namespace Companies.API.Test
         }
 
 
-
+        // TEST PAGINATION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     }
 }
