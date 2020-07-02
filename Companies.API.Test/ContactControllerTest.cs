@@ -11,8 +11,7 @@ using Companies.API.Test.Data;
 using System.Collections.Generic;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
-
-
+using Companies.API.DTOs;
 
 namespace Companies.API.Test
 {
@@ -35,33 +34,59 @@ namespace Companies.API.Test
         public ComtactControllerTest()
         {
             context = new ApplicationDbContext(dbContextOptions);
-            //DummyDataDBInitializer db = new DummyDataDBInitializer();
-            //db.Seed(context);
-
-            //repository = new ContactsRepository(context);
+            DBInitializer db = new DBInitializer();
+            db.Seed(context);
 
         }
 
 
         [TestMethod]
-        public void Details_Return_OkResult()
+        public void Details_Works()
         {
             //Arrange  
             ContactController contactController = new ContactController(context);
 
             var Id = 1;
 
-            // invoke the get action
+            // invoke the get action of the controller
             IActionResult actionResult = contactController.Details(Id);
+
+            var okObjectResult = actionResult as OkObjectResult;
+
+            ContactDTO contact = okObjectResult.Value as ContactDTO;
+            Assert.AreEqual("Pepe", contact.FirstName);
+
 
             //ASSERT
             Assert.IsInstanceOfType(actionResult, typeof(OkObjectResult));
         }
 
+        [TestMethod]
+        public void List_Works()
+        {
+            //Arrange  
+            ContactController contactController = new ContactController(context);
+
+            var Id = 1;
+
+            // invoke the get action of the controller
+            IActionResult actionResult = contactController.List(Id); // IActionResult is the base for all other returning types, like "OkObjectResult"
+
+            //some cast to be able to read the returned value
+            OkObjectResult okObjectResult = actionResult as OkObjectResult;
+            IEnumerable<ContactDTO> contacts = okObjectResult.Value as IEnumerable<ContactDTO>;
+
+            Assert.AreEqual(contacts.Count(), 1);
+
+
+            //ASSERT
+            Assert.AreEqual(contacts.Count(), 1);
+            Assert.IsInstanceOfType(actionResult, typeof(OkObjectResult));
+        }
 
 
         [TestMethod]
-        public void Post_Database_FK_Check_Works()
+        public void Post_Works()
         {
 
             ContactController contactController = new ContactController(context);
@@ -106,6 +131,8 @@ namespace Companies.API.Test
             Assert.IsInstanceOfType(actionResult, typeof(BadRequestResult));
 
         }
+
+
 
     }
 }

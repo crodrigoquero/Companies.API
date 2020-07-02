@@ -35,7 +35,7 @@ namespace Companies.API.Test
         public CompanyControllerTest()
         {
             context = new ApplicationDbContext(dbContextOptions);
-            DummyDataDBInitializer _db = new DummyDataDBInitializer();
+            DBInitializer _db = new DBInitializer();
             _db.Seed(context);
 
             //repository = new PostRepository(context);
@@ -119,8 +119,6 @@ namespace Companies.API.Test
             Assert.IsInstanceOfType(actionResult, typeof(BadRequestResult));
 
         }
-
-
 
 
     }
