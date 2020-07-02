@@ -70,8 +70,18 @@ namespace Companies.API.Controllers
                 BusinessTypeId = company.BusinessTypeId
                 //UserId = user.Id,
             };
-            _db.Companies.Add(companyObj);
-            _db.SaveChanges();
+
+
+            try
+            {
+                _db.Companies.Add(companyObj);
+                _db.SaveChanges();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+
 
             return Ok(new { vehicleId = companyObj.Id, message = "Company Added Successfully" });
         }
