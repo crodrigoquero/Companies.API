@@ -50,7 +50,7 @@ namespace Companies.API.Controllers
 
             var departmentObj = new Department()
             {
-                Description = department.Description
+                Description = department.Description.Trim()
                 //UserId = user.Id,
             };
 
@@ -111,7 +111,7 @@ namespace Companies.API.Controllers
         [ProducesResponseType(404)]
         public IActionResult Details(int id)
         {
-            var foundDepartments = _db.RelationshipTypes.Find(id);
+            var foundDepartments = _db.Departments.Find(id);
             if (foundDepartments == null)
             {
                 return NotFound();
@@ -142,7 +142,8 @@ namespace Companies.API.Controllers
 
             //return Response.Redirect("List");
             //return RedirectToAction("List");
-        }
+         }
+
 
 
     }

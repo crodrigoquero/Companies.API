@@ -56,7 +56,16 @@ namespace Companies.API.Controllers
                 Phome = contact.Phome
             };
             _db.Contacts.Add(contactObj);
-            _db.SaveChanges();
+
+            try
+            {
+                _db.SaveChanges();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+
 
             return Ok(new { vehicleId = contactObj.Id, message = "Company Contact Added Successfully" });
         }
@@ -71,7 +80,7 @@ namespace Companies.API.Controllers
         [ProducesResponseType(200, Type = typeof(List<ContactDTO>))]
         public IActionResult Search(string search)
         {
-            var contactRoles = from c in _db.Contacts
+            var contacts = from c in _db.Contacts
                                where c.LastName.StartsWith(search)
                                select new ContactDTO
                                {
@@ -83,11 +92,45 @@ namespace Companies.API.Controllers
                                    Phome = c.Phome
                                };
 
-            return Ok(contactRoles);
+            return Ok(contacts);
+            // HOW TO IMPROVE SEARCH FUNCTIONALITY (source: Stack Exchange):
+
+            // a) You should be able to fit inside your GET with using clever parameter structure.
+            // In extreme case you can even go for tactics like below google search where I set a lot of parameters
+            // still its a super short url.
+
+            // b) Create another entity in your application like JobSearch. Assuming you got so much options,
+            // its probable that you will need to store these searches as well and manage them, so its just clearing up
+            // your application.You can work with the JobSearch objects as a whole entity, meaning you can test it / use it easier.
+
+            // NOTE: you can read parameters from url by using [FromUri] attribute as a prefix in every action parameter
+            // Search parameters sample: https://www.google.com/search?q=skeleton&tbas=0&tbm=isch&tbs=isz:l,ic:gray,itp:face,qdr:w,imgo:1
         }
 
 
+        /// <summary>
+        /// Get all the contacts from a given company 
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        [ProducesResponseType(200, Type = typeof(List<Contact>))]
+        [ProducesResponseType(404)]
+        public IActionResult List(int companyId)
+        {
+            var contacts = from c in _db.Contacts
+                            where c.CompanyId == companyId
+                            select new ContactDTO
+                            {
+                                Id = c.Id,
+                                FirstName = c.FirstName,
+                                LastName = c.LastName,
+                                Email = c.Email
+                            };
 
+            if (contacts == null) return NotFound();
+            return Ok(contacts);
+        }
 
 
         /// <summary>
