@@ -25,6 +25,7 @@ namespace Companies.API.Test
         public static DbContextOptions<ApplicationDbContext> dbContextOptions { get; }
         public static string connectionString = "server=localhost;userid=root;pwd=noolvidar+1;port=3306;database=companiesTest;allowPublicKeyRetrieval=true;sslmode=none;";
 
+        // CONSTRUCTORS
         static CompanyControllerTest()
         {
             dbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
@@ -43,9 +44,8 @@ namespace Companies.API.Test
         }
 
 
-
         [TestMethod]
-        public void Details_Return_OkResult()
+        public void Details_Works()
         {
             //Arrange  
             CompanyController companyController = new CompanyController(context);
@@ -59,9 +59,68 @@ namespace Companies.API.Test
             Assert.IsInstanceOfType(actionResult, typeof(OkObjectResult));
         }
 
+        [TestMethod]
+        public void Post_Works()
+        {
+
+            CompanyController companyController = new CompanyController(context);
+
+            // prepare user identity with its necessary claims
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, "username"),
+                new Claim(ClaimTypes.NameIdentifier, "userId"),
+                new Claim(ClaimTypes.Email, "userId@cojones.com"),
+
+            };
+            var identity = new ClaimsIdentity(claims, "TestAuthType");
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+
+            // apply the claims
+            companyController.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = claimsPrincipal
+                }
+            };
+
+            // create a mock object
+            Company company = new Company
+            {
+                //Id = 1,
+                Name = "name",                       
+                Street = "street",
+                Street2 = "street 2",
+                HouseNumber = "12",
+                City = "city",
+                County = "county",
+                State = "state",
+                Province = "province",
+                Region = "region",
+                Country = "country",
+                Postcode = "postcode",
+                CompanySiteUrl1 = "site url",
+                CompanySiteUrl2 = "site url 2",
+                CompanySiteUrl3 = "site url 3",
+                LinkedIn = "linked in",
+                Twitter = "twitter",
+                Facebook = "facebook",
+                CompanyRelationshipTypeId = 1, // foreing key
+                BusinessTypeId = 1 // foreing key
+
+            };
+
+            // invoke the Post action
+            IActionResult actionResult = companyController.Post(company);
+
+            //ASSERT
+            Assert.IsInstanceOfType(actionResult, typeof(OkObjectResult));
+
+        }
 
         [TestMethod]
-        public void Post_Database_FK_Check_Works()
+        public void Post_FK_Check_Works()
         {
 
             CompanyController companyController = new CompanyController(context);
