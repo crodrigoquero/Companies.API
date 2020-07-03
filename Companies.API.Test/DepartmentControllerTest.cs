@@ -17,69 +17,52 @@ namespace Companies.API.Test
     [TestClass]
     public class DepartmentControllerTest
     {
-        [TestMethod]
-        public void DepartmentController_List_ReturnsDepartmentsList()
+
+        private ApplicationDbContext context;
+        public static DbContextOptions<ApplicationDbContext> dbContextOptions { get; }
+        public static string connectionString = "server=localhost;userid=root;pwd=noolvidar+1;port=3306;database=companiesTest;allowPublicKeyRetrieval=true;sslmode=none;";
+
+
+        // CONSTRUCTORS
+        static DepartmentControllerTest()
         {
+            dbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseMySQL(connectionString)
+                .Options;
+        }
 
-            DepartmentController departmentController = new DepartmentController(Helper.GetDatabaseContext());
-
-            OkObjectResult result = (OkObjectResult)departmentController.List();
-
-            List<Department> retrievedList = (List<Department>)result.Value;
-
-
-            Assert.AreEqual(10, retrievedList.Count());
+        public DepartmentControllerTest()
+        {
+            context = new ApplicationDbContext(dbContextOptions);
+            DBInitializer _db = new DBInitializer();
+            _db.Seed(context);
 
         }
 
-
-        //[TestMethod]
-        //public void DepartmentController_Redirection_Works()
-        //{
-
-        //    DepartmentController departmentController = new DepartmentController(Helper.GetDatabaseContext());
-
-        //    RedirectToRouteResult result = departmentController.Redirection(0) as RedirectToRouteResult;
-        //    //OkObjectResult result = (OkObjectResult)departmentController.Redirection(0);
-            
-
-        //    Assert.AreEqual("List", result.RouteValues["action"]);
-        //    //Assert.AreEqual("Department", result.RouteValues["controller"]);
-
-        //}
-
+        /// <summary>
+        /// Must return a single object
+        /// </summary>
         [TestMethod]
-        public void DepartmentController_GetOne_Works()
+        public void Details_Works()
         {
+            //Arrange  
+            DepartmentController departmentController = new DepartmentController(context);
 
-            DepartmentController departmentController = new DepartmentController(Helper.GetDatabaseContext());
+            var Id = 1;
 
+            // invoke the get action
+            IActionResult actionResult = departmentController.Details(Id);
 
-            IActionResult actionResult = departmentController.Details(1);
+            //ASSERT
             Assert.IsInstanceOfType(actionResult, typeof(OkObjectResult));
-
         }
 
 
         [TestMethod]
-        public void DepartmentController_returns_404_if_NotFound()
+        public void Post_Works()
         {
 
-            DepartmentController departmentController = new DepartmentController(Helper.GetDatabaseContext());
-
-            IActionResult actionResult = departmentController.Details(10000);
-            Assert.IsInstanceOfType(actionResult, typeof(NotFoundResult));
-
-            //var response = departmentController.Post(department);
-            //Assert.AreEqual(200, response.ToString());
-        }
-
-
-        [TestMethod]
-        public void DepartmentController_Post_Works()
-        {
-
-            DepartmentController departmentController = new DepartmentController(Helper.GetDatabaseContext());
+            DepartmentController departmentController = new DepartmentController(context);
 
             // prepare user identity with its necessary claims
             var claims = new List<Claim>()
@@ -87,7 +70,7 @@ namespace Companies.API.Test
                 new Claim(ClaimTypes.Name, "username"),
                 new Claim(ClaimTypes.NameIdentifier, "userId"),
                 new Claim(ClaimTypes.Email, "userId@cojones.com"),
-                //new Claim("name", "Carlos Rodrigo"),
+
             };
             var identity = new ClaimsIdentity(claims, "TestAuthType");
             var claimsPrincipal = new ClaimsPrincipal(identity);
@@ -104,8 +87,9 @@ namespace Companies.API.Test
             // create a mock object
             Department department = new Department
             {
-                Id = 1,
-                Description = "New Department"
+                //Id = 1,
+                Description = "Test department"
+
             };
 
             // invoke the Post action
@@ -116,6 +100,46 @@ namespace Companies.API.Test
 
         }
 
+        //[TestMethod]
+        //public void Post_Model_Check_Works()
+        //{
 
+        //    DepartmentController departmentController = new DepartmentController(context);
+
+        //    // prepare user identity with its necessary claims
+        //    var claims = new List<Claim>()
+        //    {
+        //        new Claim(ClaimTypes.Name, "username"),
+        //        new Claim(ClaimTypes.NameIdentifier, "userId"),
+        //        new Claim(ClaimTypes.Email, "userId@cojones.com"),
+
+        //    };
+        //    var identity = new ClaimsIdentity(claims, "TestAuthType");
+        //    var claimsPrincipal = new ClaimsPrincipal(identity);
+
+        //    // apply the claims
+        //    departmentController.ControllerContext = new ControllerContext
+        //    {
+        //        HttpContext = new DefaultHttpContext
+        //        {
+        //            User = claimsPrincipal
+        //        }
+        //    };
+
+        //    // create a mock object
+        //    Department department = new Department
+        //    {
+        //        //Id = 1,
+        //        Description = "" // to make it fail (required property)
+
+        //    };
+
+        //    // invoke the Post action
+        //    IActionResult actionResult = departmentController.Post(department);
+
+        //    //ASSERT
+        //    Assert.IsInstanceOfType(actionResult, typeof(BadRequestResult));
+
+        //}
     }
 }
