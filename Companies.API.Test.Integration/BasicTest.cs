@@ -1,12 +1,22 @@
 ﻿using System;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Companies.API.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
 namespace Companies.API.Test.Integration
 {
+    // Para que los nombres de los test no sean demasiado largos en el explorardor de test
+    //hay que crear un archivo de configuracion json cuyo nombre debe ser "xunit.runner.json".
+    //tambien hay que hacer modificar el archivo del proyecto para anadir un nuevo "item group"
+      //    <ItemGroup>
+      //      <None Update = "xunit.runner.json" >
+      //         < CopyToOutputDirectory > PreserveNewest </ CopyToOutputDirectory >
+      //      </ None >
+      //    </ItemGroup >
     public class BasicTest : IClassFixture<WebApplicationFactory<Startup>>
     {
         private readonly WebApplicationFactory<Startup> _factory;
@@ -30,14 +40,18 @@ namespace Companies.API.Test.Integration
 
             // Act
             var response = await ciient.GetAsync(url);
+            
 
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal("application/json; charset=utf-8", response.Content.Headers.ContentType.ToString());
+
+
+            //var company = await response.Content.ReadAsAsync<Company>();
+            //Assert.Equal("name", company.Name);
         }
 
         [Theory]
-        //[InlineData("/")]
         [InlineData("/api/Company/1")]
         public async Task Unathorized_Get_One_Fails(string url)
         {
@@ -49,11 +63,11 @@ namespace Companies.API.Test.Integration
 
             // Assert
             Assert.Equal("Unauthorized", response.StatusCode.ToString());
+
         }
 
         [Theory]
         [InlineData("/")]
-        //[InlineData("/api/Company/1")]
         public async Task API_UI_Works(string url)
         {
             // Arrange
