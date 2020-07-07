@@ -103,10 +103,14 @@ namespace Companies.API
 
 
             services.AddScoped<IDbInitializer, DbInitializer>();
-            services.AddMvc().AddXmlSerializerFormatters(); // CONTENT NEGOTIATION SETUP: in order to be able to return content in XML or Json format
+            services.AddMvcCore()
+                .AddDataAnnotations()
+                .AddCors()
+                .AddXmlSerializerFormatters(); // CONTENT NEGOTIATION SETUP: in order to be able to return content in XML or Json format
+
             //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<ApplicationDbContext>(options => options.UseMySQL(Configuration.GetConnectionString("DefaultConnection")));
-
+            
 
             // connection string for mysql
             //"DefaultConnection": "Server=localhost,1433; Database=testFromMacOsDb2; User=sa; Password=reallyStrongPwd123;",

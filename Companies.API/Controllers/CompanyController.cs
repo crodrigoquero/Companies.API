@@ -72,22 +72,29 @@ namespace Companies.API.Controllers
             };
 
 
-            try
-            {
-                _db.Companies.Add(companyObj);
-                _db.SaveChanges();
-            }
-            catch
-            {
-                return BadRequest();
-            }
+            _db.Companies.Add(companyObj);
+            _db.SaveChanges();
 
 
             return Ok(new { vehicleId = companyObj.Id, message = "Company Added Successfully" });
         }
 
 
-
+        /// <summary>
+        /// Return a paged list of Companies
+        /// </summary>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{pageNumber=1}/{pageSize=2}")]
+        [ProducesResponseType(200, Type = typeof(List<Company>))]
+        [ProducesResponseType(404)]
+        public IActionResult List(int pageNumber, int pageSize)
+        {
+            var companies = _db.Companies.OrderBy(q => q.Id);
+            if (companies == null) return NotFound();
+            return Ok(companies.Skip((pageNumber - 1) * pageSize).Take(pageSize));
+        }
 
 
         [HttpGet("[action]")]
@@ -153,7 +160,7 @@ namespace Companies.API.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("{id=1}")]
         [ProducesResponseType(200, Type = typeof(Company))]
         public IActionResult Details(int id)
         {
@@ -163,18 +170,8 @@ namespace Companies.API.Controllers
                 return NoContent();
             }
 
-            var company = from c in _db.Companies
-                          //join u in _db.Users on v.UserId equals u.Id
-                          where c.Id == id
-                          select new
-                          {
-                              Id = c.Id,
-                              Name = c.Name,
-                              BusinessTypeId = c.BusinessTypeId,
-                              CompanyRelationshipTypeId = c.CompanyRelationshipTypeId
-                          };
 
-            return Ok(company);
+            return Ok(foundCompany);
         }
 
     }

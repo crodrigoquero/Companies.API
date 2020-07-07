@@ -102,7 +102,7 @@ namespace Companies.API.Test
         }
 
         [TestMethod]
-        public void Post_Works()
+        public void Post_FK_Check_Works()
         {
 
             ContactController contactController = new ContactController(context);
@@ -140,14 +140,65 @@ namespace Companies.API.Test
 
             };
 
+
+
             // invoke the Post action
             IActionResult actionResult = contactController.Post(contact);
 
             //ASSERT
             Assert.IsInstanceOfType(actionResult, typeof(BadRequestResult));
 
+
         }
 
+        [TestMethod]
+        public void Post_Works()
+        {
+
+            ContactController contactController = new ContactController(context);
+
+            // prepare user identity with its necessary claims
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, "username"),
+                new Claim(ClaimTypes.NameIdentifier, "userId"),
+                new Claim(ClaimTypes.Email, "userId@cojones.com"),
+
+            };
+            var identity = new ClaimsIdentity(claims, "TestAuthType");
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+
+            // apply the claims
+            contactController.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = claimsPrincipal
+                }
+            };
+
+            // create a mock object
+            Contact contact = new Contact
+            {
+                //Id = 1,
+                CompanyId = 1, /// bad foreing key 
+                DepartmentId = 1, /// bad foreing key 
+                ContactRoleId = 1, /// bad foreing key  
+                FirstName = "Pepe",
+                LastName = "Gotera",
+                Email = "pepe.gotera@hotmail.com"
+
+            };
+
+
+            // invoke the Post action
+            IActionResult actionResult = contactController.Post(contact);
+
+            //ASSERT
+            Assert.IsInstanceOfType(actionResult, typeof(OkObjectResult));
+
+
+        }
 
         // TEST PAGINATION !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     }

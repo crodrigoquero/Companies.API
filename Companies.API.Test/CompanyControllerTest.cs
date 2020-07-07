@@ -171,11 +171,23 @@ namespace Companies.API.Test
 
             };
 
-            // invoke the Post action
-            IActionResult actionResult = companyController.Post(company);
+            bool postFailed = false;
 
-            //ASSERT
-            Assert.IsInstanceOfType(actionResult, typeof(BadRequestResult));
+            try
+            {
+                // invoke the Post action
+                IActionResult actionResult = companyController.Post(company);
+
+                //ASSERT
+                Assert.IsInstanceOfType(actionResult, typeof(BadRequestResult));
+            }
+            catch
+            {
+                postFailed = true;
+            }
+
+
+            Assert.IsTrue(postFailed);
 
         }
 

@@ -35,26 +35,18 @@ namespace Companies.API.Controllers
         /// <param name="department"></param>
         /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200)]
         public IActionResult Post(Department department)
         {
             var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value; //USER ID RETRIEVAL (FROM TOKEN) !!!!!
 
-            //HOUSTON, WE GOT A PROBLEM: la tbala de usuarios esta vacia en esta API,
-            //porque nos hemos autentificado en otra API.
-            //var user = _db.Users.FirstOrDefault(u => u.Email == userEmail);
-            //if (user == null)
-            //{
-            //    return NotFound();
-            //}
-
             var departmentObj = new Department()
             {
-                Description = department.Description.Trim()
-                //UserId = user.Id,
+                Description = department.Description,
+                //Id = department.Id,
             };
-
-
 
             _db.Departments.Add(departmentObj);
             _db.SaveChanges();

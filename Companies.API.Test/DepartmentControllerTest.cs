@@ -130,12 +130,16 @@ namespace Companies.API.Test
         //    Department department = new Department
         //    {
         //        //Id = 1,
-        //        Description = "" // to make it fail (required property)
+        //        Description = null // to make it fail (required property)
 
         //    };
 
         //    // invoke the Post action
         //    IActionResult actionResult = departmentController.Post(department);
+
+        //    if (!departmentController.ModelState.IsValid) {
+        //        Assert.Fail();
+        //    }
 
         //    //ASSERT
         //    Assert.IsInstanceOfType(actionResult, typeof(BadRequestResult));
